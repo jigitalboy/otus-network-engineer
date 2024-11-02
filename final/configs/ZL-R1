@@ -1,0 +1,432 @@
+conf t
+
+ hostname "ZL-R1"
+
+ ipv6 unicast-routing
+
+ interface Loopback64500
+  description "loopback"
+  ip address 10.0.0.1 255.255.255.255
+  ip ospf authentication message-digest
+  ip ospf message-digest-key 100 md5 ospfpassarea0
+  ipv6 enable
+  ipv6 address FD00:CCFF:200A::1/128
+  ipv6 address FE80::1 link-local
+  ipv6 ospf authentication ipsec spi 500 md5 1234567890abcdef1234567890abcdef
+  ipv6 ospf 64500 area 0
+  no shutdown
+  exit
+
+ interface Ethernet0/0
+  description "to ISP"
+  ip address 99.99.144.1 255.255.255.254
+  ipv6 enable
+  ipv6 address FE80::2 link-local
+  ipv6 address 20FF:CCFE:FFFF:3::1/127
+  no shutdown
+  exit
+
+ interface Ethernet0/1
+  description "to ZL-R2"
+  ip address 35.10.0.1 255.255.248.0
+  ip ospf authentication message-digest
+  ip ospf message-digest-key 100 md5 ospfpassarea0
+  ip ospf dead-interval minimal hello-multiplier 5
+  ipv6 enable
+  ipv6 address FE80::1 link-local
+  ipv6 address 20FF:CCFF:200A:A1::1/64
+  ipv6 ospf authentication ipsec spi 501 md5 1234567890abcdef1234567890abcdef
+  ipv6 ospf hello-interval 1
+  ipv6 ospf dead-interval 4
+  ipv6 ospf 64500 area 0
+  no shutdown
+  exit
+
+ interface Ethernet0/2
+  description "to ZL-R3"
+  ip address 35.10.8.1 255.255.254.0
+  ip ospf authentication message-digest
+  ip ospf message-digest-key 100 md5 ospfpassarea0
+  ip ospf dead-interval minimal hello-multiplier 5
+  ipv6 enable
+  ipv6 address FE80::1 link-local
+  ipv6 address 20FF:CCFF:200A:A2::1/64
+  ipv6 ospf authentication ipsec spi 502 md5 1234567890abcdef1234567890abcdef
+  ipv6 ospf hello-interval 1
+  ipv6 ospf dead-interval 4
+  ipv6 ospf 64500 area 0
+  no shutdown
+  exit
+
+ interface Ethernet0/3
+  description "not used"
+  no ip address
+  shutdown
+  exit
+
+ interface Tunnel0
+  description "DMVPN hub"
+  tunnel source Ethernet0/0
+  tunnel mode gre multipoint
+  ip address 172.31.255.1 255.255.255.0
+  ip ospf authentication message-digest
+  ip ospf message-digest-key 101 md5 ospfpassarea0dmvpn
+  ip ospf network non-broadcast
+  ip ospf priority 10
+  ip ospf hello-interval 20
+  ip ospf dead-interval 60
+  ip nhrp map multicast dynamic
+  ip nhrp network-id 1
+  ip nhrp authentication dmvpnpas
+  ip nhrp redirect
+  ipv6 enable
+  ipv6 address FE80::1 link-local
+  ipv6 address FD00:CCFF:3000::1/48
+  ipv6 ospf hello-interval 20
+  ipv6 ospf dead-interval 60
+  ipv6 ospf 64500 area 0
+  ipv6 ospf priority 10
+  ipv6 ospf network non-broadcast
+  ipv6 ospf neighbor FE80::2
+  ipv6 ospf neighbor FE80::3
+  ipv6 nhrp map multicast dynamic
+  ipv6 nhrp network-id 1
+  ipv6 nhrp authentication dmvpnpas
+  ipv6 nhrp redirect
+  no shutdown
+  exit
+
+ interface Tunnel1
+  description "GRE to DP-R1"
+  ip address 172.31.254.0 255.255.255.254
+  tunnel source Ethernet0/0
+  tunnel destination 99.99.140.1
+  ip ospf authentication message-digest
+  ip ospf message-digest-key 102 md5 ospfpassarea0gretun
+  ip ospf network point-to-point
+  ip ospf priority 10
+  ip ospf hello-interval 20
+  ip ospf dead-interval 60
+  no shutdown
+  exit
+
+ interface Tunnel2
+  description "GRE to DP-R1"
+  ipv6 enable
+  ipv6 address FE80::1 link-local
+  ipv6 address FD00:CCFF:3001::0/127
+  tunnel source Ethernet0/0
+  tunnel destination 20FF:CCFD:FFFF:3::1
+  tunnel mode gre ipv6
+  ipv6 ospf hello-interval 20
+  ipv6 ospf dead-interval 60
+  ipv6 ospf 64500 area 0
+  ipv6 ospf priority 10
+  ipv6 ospf network non-broadcast
+  ipv6 ospf neighbor FE80::2
+  no shutdown
+  exit
+
+ ip route 0.0.0.0 0.0.0.0 99.99.144.0 30 name "to ISP"
+ ipv6 route ::/0 20FF:CCFE:FFFF:3::0 30 name "to ISP"
+
+ ip route 50.50.104.0 255.255.254.0 172.31.255.2 1 name "to OV-R1 through DMVPN"
+ ip route 50.50.96.0 255.255.248.0 172.31.254.1 1 name "to DP-R1 through GRE tunnel"
+ ip route 35.11.0.0 255.255.252.0 172.31.255.3 1 name "to LP-R1 through DMVPN"
+
+ ipv6 route 20FF:CCFF:200D::/48 FD00:CCFF:3000::2 1 name "to OV-R1 through DMVPN"
+ ipv6 route 20FF:CCFF:200C::/48 FD00:CCFF:3001::1 1 name "to R9 through GRE tunnel"
+ ipv6 route 20FF:CCFF:200B::/48 FD00:CCFF:3000::3 1 name "to LP-R1 through DMVPN"
+
+ router ospf 64500
+  router-id 10.0.0.1
+  auto-cost reference-bandwidth 1000
+  area 0 authentication message-digest
+  passive-interface Loopback64500
+  passive-interface Ethernet0/0
+  passive-interface Ethernet0/3
+  passive-interface Tunnel2
+  network 10.0.0.1 255.255.255.255 area 0
+  network 35.10.0.0 0.0.7.255 area 0
+  network 35.10.8.0 0.0.1.255 area 0
+  network 172.31.255.0 0.0.0.255 area 0
+  network 172.31.254.0 0.0.0.1 area 0
+  neighbor 172.31.255.2
+  neighbor 172.31.255.3
+  default-information originate
+  exit
+
+ ipv6 router ospf 64500
+  router-id 6.0.0.1
+  auto-cost reference-bandwidth 1000
+  passive-interface Loopback64500
+  passive-interface Ethernet0/0
+  passive-interface Ethernet0/3
+  passive-interface Tunnel1
+  default-information originate
+  exit
+ exit
+
+ ip prefix-list ONLY_DEFAULT_FROM_ISP seq 5 permit 0.0.0.0/0
+ ip prefix-list ONLY_DEFAULT_FROM_ISP seq 100 deny 0.0.0.0/0 le 32
+
+ ipv6 prefix-list ONLY_DEFAULT_FROM_ISP seq 5 permit ::/0
+ ipv6 prefix-list ONLY_DEFAULT_FROM_ISP seq 100 deny ::/0 le 128
+
+ router bgp 64500
+  bgp router-id 99.99.144.1
+  neighbor 99.99.144.0 remote-as 64510
+  neighbor 20FF:CCFE:FFFF:3::0 remote-as 64510
+  neighbor 64500AS peer-group
+  neighbor 64500AS remote-as 64500
+  neighbor 64500AS update-source Loopback64500
+  neighbor 64500AS password bgppass
+  neighbor 10.0.0.2 peer-group 64500AS
+  neighbor 10.0.0.3 peer-group 64500AS
+  neighbor 10.0.0.4 peer-group 64500AS
+  neighbor 10.0.0.5 peer-group 64500AS
+  neighbor 10.0.0.6 peer-group 64500AS
+  neighbor 10.0.0.7 peer-group 64500AS
+  neighbor 64500AS6 peer-group
+  neighbor 64500AS6 remote-as 64500
+  neighbor 64500AS6 update-source Loopback64500
+  neighbor 64500AS6 password bgppass
+  neighbor FD00:CCFF:200A::2 peer-group 64500AS6
+  neighbor FD00:CCFF:200A::3 peer-group 64500AS6
+  neighbor FD00:CCFF:200A::4 peer-group 64500AS6
+  neighbor FD00:CCFF:200A::5 peer-group 64500AS6
+  neighbor FD00:CCFF:200A::6 peer-group 64500AS6
+  neighbor FD00:CCFF:200A::7 peer-group 64500AS6
+
+  address-family ipv4
+   neighbor 99.99.144.0 activate
+   neighbor 99.99.144.0 prefix-list ONLY_DEFAULT_FROM_ISP in
+   no neighbor 20FF:CCFE:FFFF:3::0 activate
+   network 35.10.0.0 mask 255.255.248.0
+   network 35.10.8.0 mask 255.255.254.0
+   network 35.10.10.0 mask 255.255.254.0
+   network 35.10.12.0 mask 255.255.255.0
+   network 35.10.64.0 mask 255.255.255.0
+   network 35.10.65.0 mask 255.255.255.128
+   network 35.10.65.128 mask 255.255.255.128
+   network 35.10.128.0 mask 255.255.255.192
+   network 35.10.192.0 mask 255.255.255.0
+   network 35.10.193.0 mask 255.255.255.0
+   network 35.10.194.0 mask 255.255.255.128
+   aggregate-address 35.10.0.0 255.255.0.0 summary-only
+   neighbor 64500AS route-reflector-client
+   neighbor 64500AS next-hop-self
+   neighbor 64500AS default-originate
+   neighbor 10.0.0.2 activate
+   neighbor 10.0.0.3 activate
+   neighbor 10.0.0.4 activate
+   neighbor 10.0.0.5 activate
+   neighbor 10.0.0.6 activate
+   neighbor 10.0.0.7 activate
+   no neighbor FD00:CCFF:200A::2 activate
+   no neighbor FD00:CCFF:200A::3 activate
+   no neighbor FD00:CCFF:200A::4 activate
+   no neighbor FD00:CCFF:200A::5 activate
+   no neighbor FD00:CCFF:200A::6 activate
+   no neighbor FD00:CCFF:200A::7 activate   
+   exit-address-family
+
+  address-family ipv6
+   neighbor 20FF:CCFE:FFFF:3::0 activate
+   neighbor 20FF:CCFE:FFFF:3::0 prefix-list ONLY_DEFAULT_FROM_ISP in
+   network 20FF:CCFF:200A:A1::/64
+   network 20FF:CCFF:200A:A2::/64
+   network 20FF:CCFF:200A:A3::/64
+   network 20FF:CCFF:200A:A4::/64
+   network 20FF:CCFF:200A:B1::/64
+   network 20FF:CCFF:200A:B2::/64
+   network 20FF:CCFF:200A:B3::/64
+   network 20FF:CCFF:200A:C1::/64
+   network 20FF:CCFF:200A:D1::/64
+   network 20FF:CCFF:200A:D2::/64
+   network 20FF:CCFF:200A:D3::/64
+   aggregate-address 20FF:CCFF:200A::/48 summary-only
+   neighbor 64500AS6 route-reflector-client
+   neighbor 64500AS6 next-hop-self
+   neighbor 64500AS6 default-originate
+   neighbor FD00:CCFF:200A::2 activate
+   neighbor FD00:CCFF:200A::3 activate
+   neighbor FD00:CCFF:200A::4 activate
+   neighbor FD00:CCFF:200A::5 activate
+   neighbor FD00:CCFF:200A::6 activate
+   neighbor FD00:CCFF:200A::7 activate  
+   exit-address-family
+  exit
+ exit
+
+ ip access-list standard 1
+  remark "permit to NTP server access"
+  10 permit 99.99.144.0 0.0.0.0
+  500 deny any
+  exit
+ ntp access-group ipv4 peer 1
+
+ ipv6 access-list NTPSERVER_IPV6_ACL
+  remark "permit to NTP server access"
+  permit ipv6 host 20FF:CCFE:FFFF:3::0 any sequence 10
+  deny ipv6 any any sequence 500
+  exit
+ ntp access-group ipv6 peer NTPSERVER_IPV6_ACL
+
+ ntp authenticate
+ ntp authentication-key 1 md5 ntpkey
+ ntp trusted-key 1
+ ntp update-calendar
+ ntp server 99.99.144.0 prefer key 1
+ ntp server 20FF:CCFE:FFFF:3::0 prefer key 1
+
+ ip access-list standard 2
+  remark "permit to NTP local server"
+  10 permit 35.10.0.0 0.0.255.255
+  500 deny any
+  exit
+ ntp access-group ipv4 serve-only 2
+
+ ipv6 access-list NTPSERVER_LAN_IPV6_ACL
+  remark "permit to NTP server access"
+  permit ipv6 20FF:CCFF:200A::/48 host 20FF:CCFF:200A:A1::1 sequence 10
+  permit ipv6 20FF:CCFF:200A::/48 host 20FF:CCFF:200A:A2::1 sequence 20
+  deny ipv6 any any sequence 500
+  exit
+ ntp access-group ipv6 serve-only NTPSERVER_LAN_IPV6_ACL
+ clock timezone UTC 2
+ ntp master 3
+
+ ip dns server
+ ip domain-lookup
+ ip name-server 99.99.134.1 99.99.136.2 99.99.132.1 20FF:CCFE:FFFF:2::1 20FF:CCFF:FFFF:1::2 20FF:CCFE:FFFF:1::1
+ ip domain name zl.com
+ ip dns primary zl.com soa ns.zl.com admin@zl.com
+ ip host zl.com ns ns.zl.com
+ ip host ns.zl.com 35.10.0.1 35.10.8.1 20FF:CCFF:200A:A1::1 20FF:CCFF:200A:A2::1
+
+ ip dhcp excluded-address 0.0.0.0 35.10.0.3
+ ip dhcp excluded-address 35.10.7.255 35.10.8.2
+ ip dhcp excluded-address 35.10.9.255 255.255.255.255
+
+ service dhcp
+
+ ip dhcp pool DHCP_POOL_1
+  network 35.10.0.0 255.255.248.0
+  default-router 35.10.0.1 35.10.8.1
+  domain-name zl.com
+  dns-server 35.10.0.1 35.10.8.1
+  lease 8
+  exit
+
+ ip dhcp pool DHCP_POOL_2
+  network 35.10.8.0 255.255.254.0
+  default-router 35.10.8.1 35.10.0.1 
+  domain-name zl.com
+  dns-server 35.10.8.1 35.10.0.1 
+  lease 8
+  exit
+
+ ipv6 dhcp pool DHCP_POOL_IPV6_1
+  address prefix 20FF:CCFF:200A:A1::/64 lifetime 2073600 691200
+  domain-name zl.com
+  dns-server 20FF:CCFF:200A:A1::1
+  exit
+
+ ipv6 dhcp pool DHCP_POOL_IPV6_2
+  address prefix 20FF:CCFF:200A:A2::/64 lifetime 2073600 691200
+  domain-name zl.com
+  dns-server 20FF:CCFF:200A:A2::1
+  exit
+
+ interface Ethernet0/1
+  ipv6 dhcp server DHCP_POOL_IPV6_1
+  ipv6 nd managed-config-flag
+  exit
+
+ interface Ethernet0/2
+  ipv6 dhcp server DHCP_POOL_IPV6_2
+  ipv6 nd managed-config-flag
+  exit
+
+ ip domain-name zl.com
+
+ crypto key generate rsa label ZLR1IPSECVPN modulus 2048
+
+ crypto pki trustpoint DPR1TRP
+  enrollment url http://172.31.254.1
+  subject-name CN=ZL-R1,OU=ZL,O=zl,O=com,C=ru
+  revocation-check none
+  rsakeypair ZLR1IPSECVPN
+  exit
+
+ crypto pki authenticate DPR1TRP
+ crypto pki enroll DPR1TRP
+! NOTE - NEED ENTER challenge NO SN NO IP
+! ON DP-R1 - do crypto pki server DPR1PKISERVER grant all
+
+ crypto isakmp policy 1
+  authentication rsa-sig
+  exit
+
+ crypto ipsec transform-set IPSEC_TRANSF_SET_1 esp-aes esp-sha-hmac
+  mode tunnel
+  exit
+ crypto ipsec profile IPSEC_PROFILE_0
+  set transform-set IPSEC_TRANSF_SET_1
+  set pfs group1
+  exit
+ crypto ipsec profile IPSEC_PROFILE_1
+  set transform-set IPSEC_TRANSF_SET_1
+  set pfs group1
+  exit
+ crypto ipsec profile IPSEC_PROFILE_2
+  set transform-set IPSEC_TRANSF_SET_1
+  set pfs group1
+  exit
+
+ interface Tunnel0
+  tunnel protection ipsec profile IPSEC_PROFILE_0
+  exit
+ interface Tunnel1
+  tunnel protection ipsec profile IPSEC_PROFILE_1
+  exit
+ interface Tunnel2
+  tunnel protection ipsec profile IPSEC_PROFILE_2
+  exit
+
+ crypto key generate rsa usage-keys label SSH modulus 2048
+ service password-encryption
+ password encryption aes
+ password logging
+ 
+ aaa new-model
+ aaa authentication login default local
+ aaa authorization console
+ aaa authorization exec default local
+ 
+ username admin privilege 15 algorithm-type scrypt secret adminpassword
+ username support privilege 1 algorithm-type scrypt secret supppass
+ enable algorithm-type scrypt secret level 15 adminpassword
+ enable algorithm-type scrypt secret level 1 supportassword
+ enable algorithm-type scrypt secret level 2 editdesc
+ privilege exec level 2 configure terminal
+ privilege configure level 2 interface 
+ privilege interface level 2 description
+
+ line vty 0 4
+  transport input ssh
+  login authentication default
+  logging synchronous
+  exit
+ line console 0
+  logging synchronous
+  exit
+ logging on
+ logging console 3
+ logging buffered 3
+ logging buffered 32000
+ logging trap 6
+ logging facility local1
+ logging host 35.10.0.3
+ logging host ipv6 20FF:CCFF:200A:A1::3
