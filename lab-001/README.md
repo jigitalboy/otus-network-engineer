@@ -1,3 +1,3 @@
 # Конфигурация VLAN
 
-hello world
+This is the configuration of VLANS
