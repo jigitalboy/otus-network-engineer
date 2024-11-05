@@ -14,4 +14,4 @@
 
 В первой части необходимо соеденить выбрать опеределенные устройства и соеденить их между собой
 
-![](\\10.150.108.2\backups_new\ubuntu-mate\Documents_backup\my_lessons\OTUS\003_VLANS\lab_003_topology.png)
+![Topology](lab_003_topology.png)
