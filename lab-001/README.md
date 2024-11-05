@@ -16,3 +16,7 @@
 
 ### Топология Сети
 ![Topology](lab_003_topology.png)
+
+### Схема IP адресов
+![Topology](lab_003_addressing_scheme.png)
+
