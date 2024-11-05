@@ -15,13 +15,13 @@
 В первой части необходимо соеденить выбрать опеределенные устройства и соеденить их между собой
 
 ### Топология Сети
-![](/images/lab_003_topology.png)
+![topology](lab_003_topology.png)
 
 ### Схема IP адресов
-![Ip адреса таблица](\images\lab_003_addressing_scheme.png)
+![ip addressing scheme](lab_003_addressing_scheme.png)
 
 ### Таблица Подсетей
 
-![подсети](\images\lab_003_vlans.png)
+![vlans](lab_003_vlans.png)
 
-[def]: /images/lab_003_topology.png
+[def]: lab_003_topology.png
