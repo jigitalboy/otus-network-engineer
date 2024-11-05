@@ -15,7 +15,7 @@
 В первой части необходимо соеденить выбрать опеределенные устройства и соеденить их между собой.
 
 ### Топология Сети
-![topology]()
+![topology](lab_003_topology.png)
 
 ### Схема IP адресов
 ![ip addressing scheme](lab_003_addressing_scheme.png)
