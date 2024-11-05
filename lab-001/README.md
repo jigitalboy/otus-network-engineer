@@ -23,3 +23,5 @@
 ### Таблица Подсетей
 
 ![подсети](\images\lab_003_vlans.png)
+
+[def]: /images/lab_003_topology.png
