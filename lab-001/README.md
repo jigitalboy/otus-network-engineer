@@ -154,8 +154,8 @@
  
 ##### на S1
 
-         ![sho_vlan_br](lab_003_s1_show_vlan_br.png)   
+![sho_vlan_br](lab_003_s1_show_vlan_br.png)   
 
 ##### на S2
 
-         ![sho_vlan_br](lab_003_s2_show_vlan_br.png) 
+![sho_vlan_br](lab_003_s2_show_vlan_br.png) 
