@@ -152,10 +152,10 @@
 
 #### Выполните команду show vlan brief и убедитесь, что VLAN-ы назначены правильным интерфейсам.
  
-###### на S1
+##### на S1
 
 ![sho_vlan_br](lab_003_s1_show_vlan_br.png)   
 
-###### на S2
+##### на S2
 
 ![sho_vlan_br](lab_003_s2_show_vlan_br.png) 
