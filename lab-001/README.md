@@ -91,11 +91,11 @@
 
 #### 1. Создаем Виртуальные сети и даем им соответствующие имена в соответствии со схемой в вышеприведенной таблице
   
-   vlan 3
-    name Management
-   vlan 4
-    name Operations
-   vlan 7
-    name ParkingLot
-   vlan 8
-    name Native
+      vlan 3
+       name Management
+      vlan 4
+       name Operations
+      vlan 7
+       name ParkingLot
+      vlan 8
+       name Native
