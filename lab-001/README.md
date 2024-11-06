@@ -127,12 +127,29 @@
      interface range f0/2-4,f0/7-24,g0/1-2
       switchport mode access
       switchport access vlan 7
+      shutdown
 
 ###### на S2
 
      interface range f0/2-17,f0/19-24,g0/1-2
       switchport mode access
       switchport access vlan 7
+      shutdonw
 
+### 2. Назначьте VLAN-ы правильным интерфейсам коммутаторов.
 
+###### на S1
 
+        intface f0/6
+          switchport mode access
+          switchport access vlan 3
+
+###### на S2
+
+        intface f0/18
+          switchport mode access
+          switchport access vlan 3
+
+#### Выполните команду show vlan brief и убедитесь, что VLAN-ы назначены правильным интерфейсам.
+
+![sho_vlan_br](lab_003_s1_show_vlan_br.png)   
