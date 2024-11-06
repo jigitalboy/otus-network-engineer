@@ -73,17 +73,7 @@
 
 #### 9. Создайте баннер, предупреждающий всех, кто получает доступ к устройству, что несанкционированный доступ запрещен. 
 
-banner motd #
-*****************************************************
-*                                                   *
-*   Welcome to the Cisco Network Infrastructure!    *
-*   Unauthorized access is strictly prohibited.     *
-*   All activity is monitored and logged.           *
-*                                                   *
-*   Access only if you are an authorized user.      *
-*                                                   *
-*****************************************************
-#
+![banner](lab_003_banner.png)
 
 #### 10. Сохраните текущую конфигурацию в файл конфигурации запуска. 
 
