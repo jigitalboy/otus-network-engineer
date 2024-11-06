@@ -41,37 +41,37 @@
 
 2. Перейдите в режим конфигурации. 
 
-  \# config terminal 
+  ##### \# config terminal 
 
 3. Присвойте маршрутизатору имя устройства. 
 
-  \# hostname R1
+  ##### \# hostname R1
 
 4. Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора переводить неправильно введенные команды как имена хостов. 
 
-  \# no ip domain-lookup
+  ##### \# no ip domain-lookup
 
 5. Назначьте «class» в качестве зашифрованного пароля привилегированного EXEC. 
 
-  \# enable secret class
+  ##### \# enable secret class
 
 6. Назначьте «cisco» в качестве пароля для консоли и включите вход. 
 
-  \# line con 0            
+  ##### \# line con 0            
      password cisco        
      login
      exit
 
 7. Назначьте «cisco» в качестве пароля для VTY и включите вход. 
 
-  \# line vty 0 15
+  ##### \# line vty 0 15
      password cisco
      login
      exit
 
 8. Зашифруйте пароли в открытом виде. 
 
-  \# services password-encryption
+  ##### \# services password-encryption
 
 9. Создайте баннер, предупреждающий всех, кто получает доступ к устройству, что несанкционированный доступ запрещен. 
 
@@ -89,10 +89,10 @@ banner motd #
 
 10. Сохраните текущую конфигурацию в файл конфигурации запуска. 
 
-  \# copy running-config startup-config
+  ##### \# copy running-config startup-config
 
 11. Установите время на маршрутизаторе.
 
-  \# clock set 14:30:00 3 Nov 2024 
+  ##### \# clock set 14:30:00 3 Nov 2024 
 
 
