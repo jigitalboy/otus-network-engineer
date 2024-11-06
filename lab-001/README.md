@@ -64,7 +64,7 @@
 
 7. Назначьте «cisco» в качестве пароля для VTY и включите вход. 
 
-  ##### \# line vty 0 15
+    line vty 0 15
      password cisco
      login
      exit
