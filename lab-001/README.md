@@ -208,6 +208,6 @@
 
 #### Теперь еще раз выполним комманду show interface trunk
 
-![sho_vlan_br](lab_003_s1_show_interface_trunk.02.png)
+![sho_int_trunk](lab_003_s1_show_interface_trunk_02.png)
 
 Обратите внимание, что теперь в выводе команды мы можем увидеть F0/5.
