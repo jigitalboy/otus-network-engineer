@@ -159,3 +159,40 @@
 ##### на S2
 
 ![sho_vlan_br](lab_003_s2_show_vlan_br.png) 
+
+## 3. Настройте магистраль 802.1Q (Trunk) между коммутаторами.
+
+### 1. Тут мы вручную настроим магистральный интерфейс F0/1.
+
+#### а. Здесь необходимо изменить режим порта коммутатора на интерфейсе F0/1, чтобы принудительно включить магистральный режим (Trunk). 
+
+##### на S1
+        interface f0/1
+         switchport mode trunk
+
+#### Настроим Trunk таким образом, чтобы native VLAN был на 8.
+
+         switchport trunk native vlan 8
+
+#### На Trunk-е необходимо разрешить VLAN-ы 3,4 и 8
+
+         switchport trunk allowed vlan 3,4,8
+
+#### Сейчас можно настроить Trunk на порте F0/5 на коммутаторе S1
+
+         interface f0/5
+          switchport mode trunk
+
+#### Сохраним настройки 
+
+         copy running-config startup-config
+
+#### Проверим сделанные настройки
+
+         show interface trunk
+
+![sho_vlan_br](lab_003_s1_show_interface_trunk.png) 
+
+##### на S1
+        interface f0/5
+         switchport mode trunk
