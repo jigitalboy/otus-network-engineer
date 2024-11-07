@@ -241,7 +241,7 @@
 
          interface g0/0/1.8
           description VLAN8-Native
-          encapsulation dot1q 8
+          encapsulation dot1q 8 native
 
 #### Проверим конфигурацию созданных субинтерфейсов
 
