@@ -249,4 +249,34 @@
 
 ![sho_sho_run](lab_003_R1_sho_run.png)
 
-#### Все три субпорта отконфигурированы теперь мы будем проверять можем ли мы делать пинги.
+#### А также проверим, в рабочем ли состоянии находятся все настроенные интерфейсы
+
+         show ip interface brief
+
+![sho_ip_int_br](lab_003_R1_show_ip_int_br.png)
+
+#### Все три субпорта отконфигурированы. 
+
+#### Теперь мы будем проверять можем ли мы делать пинги.
+
+ping с PC-A на default gateway
+
+![ping_pca_gw](lab_003_PC-A_ping_DG.png)
+
+ping с PC-A на PC-B
+
+![ping_pca_pcb](lab_003_pca_ping_pcb.png)
+
+ping с PC-A на S2
+
+![ping_pca_s2](lab_003_pca_ping_s2.png)
+
+===============================================
+
+ping с PC-B на default gateway
+
+
+ping с PC-B на PC-A
+![]()
+![]()
+![]()
