@@ -275,8 +275,18 @@ ping с PC-A на S2
 
 ping с PC-B на default gateway
 
+![ping_pcb_gw](lab_003_ing_pcb_gw.png)
 
 ping с PC-B на PC-A
-![]()
-![]()
-![]()
+
+![ping_pcb_pca](lab_003_ping_pcb_pca.png)
+
+ping с PC-B на S1
+
+![ping_pcb_S1](lab_003_ping_pcb_S1.png)
+
+Tracert с PC-B на PC-A
+
+![tracert_pcb_pca](lab_003_tracert_pcb_pca.png)
+
+#### Все пинги сделаны с положительным результатом. Цели и задачи лабораторной работы выполнены успешно.
