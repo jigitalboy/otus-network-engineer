@@ -2,4 +2,4 @@
 
 ### Топология
 
-[topology](topology_stp.png)
+![topology](topology_stp.png)
