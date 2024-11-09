@@ -45,12 +45,7 @@
 <dd><b>h</b>. Сохраните конфигурации на всех коммутаторах.</dd> 
 </dl>
 
-> timur
-+ timur
-    + larisa
-    + sofia
-    + bilal
-    + samama
+
 
 
 
