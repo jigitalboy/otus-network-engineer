@@ -132,14 +132,31 @@ S1(config-if-range)#shutdown
 ```
 S1(config)#interface range g0/0-3
 
-** На некоторых более старых моделях коммутаторов необходим сначала ввести эту комманду, прежде чем смочь настроить линк между коммутаторами как транк.**
+На некоторых более старых моделях коммутаторов необходим сначала ввести эту комманду, прежде чем смочь настроить линк между коммутаторами как транк.
 
 S1(config-if-range)#switchport trunk encapsulation dot1q
 S1(config-if-range)#switchport mode trunk
 
 
 ```
-### **Шаг 3: Активируйте порты F0/2 и F0/4 на всех коммутаторах.**
+### **Шаг 3: Активируйте порты некоторые порты на всех коммутаторах. В нашем случае это порты ниже:**
+
+```
+S1(config)#interface range g0/0,g0/2
+S1(config-if-range)#no shutdown
+
+S2(config)#interface range g0/0,g0/3
+S2(config-if-range)#no shutdown
+
+S3(config)#interface range g0/1,g0/2
+S3(config-if-range)#no shutdown
+```
+
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#interface range g0/0,g0/2
+S1(config-if-range)#no shutdown
+
 
 ### **Шаг 4: Отобразите информацию о spanning-tree.**
 
