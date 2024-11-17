@@ -247,7 +247,7 @@ S3(config-if)#no spanning-tree cost 3
 
 ![show_010](show_010.png)
 
-![show_010](show_010.png)
+![show_011](show_011.png)
 
 <a name="part4"><h2>Часть 4. Наблюдение за процессом выбора протоколом STP порта, исходя из приоритета портов</h2></a>
 
