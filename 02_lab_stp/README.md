@@ -152,12 +152,6 @@ S3(config)#interface range g0/1,g0/2
 S3(config-if-range)#no shutdown
 ```
 
-S1#conf t
-Enter configuration commands, one per line.  End with CNTL/Z.
-S1(config)#interface range g0/0,g0/2
-S1(config-if-range)#no shutdown
-
-
 ### **Шаг 4: Отобразите информацию о spanning-tree.**
 
 
