@@ -222,6 +222,8 @@ SW3 - G0/1
 S3(config)#int g0/2
 S3(config-if)#spanning-tree cost 3
 ```
+Теперь посмотрим на STP на коммутаторе SW3.
+
 ![show_006](show_006.png)
 
 ### Шаг 3: Наблюдайте за изменениями протокола **spanning tree**.
