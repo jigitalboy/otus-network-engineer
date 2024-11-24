@@ -41,4 +41,4 @@
 + 2x Cisco vIOS Switch
 + 2x Virtual PC (VPCS)
 
-### $\color{357af3}{Instruction}$
+### <span style="color:red;">Instruction</span>
