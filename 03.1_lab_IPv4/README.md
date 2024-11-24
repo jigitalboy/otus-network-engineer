@@ -1,4 +1,4 @@
-## Lab - Implement DHCPv4
+# Lab - Implement DHCPv4
 
 Topology
 
@@ -9,6 +9,6 @@ Topology
 ![address_table](lab_05_addressing.png)
 
 
-#### Vlan Table
+### Vlan Table
 
 ![vlan_table](lab_05_vlans.png)
