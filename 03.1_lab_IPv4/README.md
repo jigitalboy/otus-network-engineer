@@ -1,16 +1,8 @@
-<style>
-    r { color: Red }
-    o { color: Orange }
-    g { color: Green }
-    b { color: Blue }
-</style>
-
-
 # Lab - Implement DHCPv4
 
 ### Topology
 
-![topology](topology_stp.png)
+![topology](lab_05_topology.png)
 
 ### Addressing Table
 
@@ -59,7 +51,7 @@
 ```
 Запишим первый IP-адрес в таблице адресации для R1 G0/1.100. Запишим второй IP-адрес в таблице адресации для S1 VLAN 200 и укажем соответствующий шлюз по умолчанию.
 
-**b.** Одна подсеть, **«Подсеть B»**, поддерживающая **28 хостов** (управляющий VLAN на R1).
+**b.** Одна подсеть, **«Подсеть B»**, поддерживающая **28 хостов** (Management VLAN на R1).
 
 **Подсеть B:**
 ```
