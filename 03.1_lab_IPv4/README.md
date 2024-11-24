@@ -128,3 +128,49 @@ i. Установите на маршрутизаторе текущее вре�
 ```
 R1# clock set 15:30:00 27 Aug 2019
 ```
+
+## **Шаг 4: Настройка межвлановой маршрутизации на R1**
+
+a. Активируйте интерфейс G0/0/1 на маршрутизаторе.
+
+```
+R1(config)# interface g0/1
+R1(config-if)# no shutdown
+R1(config-if)# exit
+```
+
+b. Настройте подинтерфейсы для каждого VLAN в соответствии с таблицей адресации IP. Все подинтерфейсы используют инкапсуляцию 802.1Q и получают первый доступный адрес из пула IP-адресов, который вы рассчитали. Убедитесь, что подинтерфейс для нативного VLAN не имеет назначенного IP-адреса. Добавьте описание для каждого подинтерфейса.
+
+```
+R1(config)# interface g0/1.100
+R1(config-subif)# description Client VLAN
+R1(config-subif)# encapsulation dot1q 100
+R1(config-subif)# ip address 192.168.1.1 255.255.255.192
+R1(config-subif)# interface g0/1.200
+R1(config-subif)# encapsulation dot1q 200
+R1(config-subif)# description Management VLAN
+R1(config-subif)# ip address 192.168.1.65 255.255.255.224
+R1(config-subif)# interface g0/1.1000
+R1(config-subif)# encapsulation dot1q 1000 native
+R1(config-subif)# description Native VLAN
+```
+
+## **c. Проверьте, что подинтерфейсы находятся в рабочем состоянии.**
+
+```
+ show ip interface brief
+```
+
+![show_01](lab_05_show_01.png)
+
+```
+R1#sho ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         unassigned      YES unset  administratively down down
+GigabitEthernet0/1         unassigned      YES unset  up                    up
+GigabitEthernet0/1.100     192.168.1.1     YES manual up                    up
+GigabitEthernet0/1.200     192.168.1.65    YES manual up                    up
+GigabitEthernet0/1.1000    unassigned      YES unset  up                    up
+GigabitEthernet0/2         unassigned      YES unset  administratively down down
+GigabitEthernet0/3         unassigned      YES unset  administratively down down
+```
