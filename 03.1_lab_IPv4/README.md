@@ -6,7 +6,7 @@
 
 ### Addressing Table
 
-![address_table](lab_05_addressing_table.png)
+![address_table](lab_05_addressing.png)
 
 
 ### Vlan Table
