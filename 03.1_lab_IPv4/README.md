@@ -160,9 +160,6 @@ R1(config-subif)# description Native VLAN
 ```
  show ip interface brief
 ```
-
-![show_01](lab_05_show_01.png)
-
 ```
 R1#sho ip interface brief
 Interface                  IP-Address      OK? Method Status                Protocol
