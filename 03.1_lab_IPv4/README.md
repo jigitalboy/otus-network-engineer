@@ -155,7 +155,7 @@ R1(config-subif)# encapsulation dot1q 1000 native
 R1(config-subif)# description Native VLAN
 ```
 
-**c. Проверьте, что подинтерфейсы находятся в рабочем состоянии.**
+**c.** Проверьте, что подинтерфейсы находятся в рабочем состоянии.
 
 ```
  show ip interface brief
