@@ -4,11 +4,11 @@ Topology
 
 ![topology](topology_stp.png)
 
-Addressing Table
+#### Addressing Table
 
 ![address_table](lab_05_addressing.png)
 
 
-Vlan Table
+#### Vlan Table
 
 ![vlan_table](lab_05_vlans.png)
