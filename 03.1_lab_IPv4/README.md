@@ -1,3 +1,11 @@
+<style>
+    r { color: Red }
+    o { color: Orange }
+    g { color: Green }
+    b { color: Blue }
+</style>
+
+
 # Lab - Implement DHCPv4
 
 ### Topology
@@ -33,3 +41,4 @@
 + 2x Cisco vIOS Switch
 + 2x Virtual PC (VPCS)
 
+### <b>Instruction</b>
