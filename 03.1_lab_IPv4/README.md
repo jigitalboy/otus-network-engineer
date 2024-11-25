@@ -509,7 +509,7 @@ R1#show dhcp server
 
 ## **Шаг 4: Попробуйте получить IP-адрес от DHCP на PC-A**
 
-**a.** Откройте командную строку на PC-A **ip dhcp**
+**a.** Откройте командную строку на **PC-A** **ip dhcp**
 
 ```
 PC-A> ip dhcp
@@ -534,7 +534,7 @@ RHOST:PORT  : 127.0.0.1:30000
 MTU         : 1500
 ```
 
-**c.** Проверьте подключение, отправив ping на IP-адрес интерфейса G0/1 маршрутизатора R1.
+**c.** Проверьте подключение, отправив ping на **IP-адрес** интерфейса **G0/1** маршрутизатора **R1**.
 
 ```
 PC-A> ping 192.168.1.1
@@ -546,4 +546,127 @@ PC-A> ping 192.168.1.1
 84 bytes from 192.168.1.1 icmp_seq=5 ttl=255 time=6.361 ms
 
 PC-A>
+```
+
+# **Часть 3: Настройка и проверка DHCP Relay на R2**
+
+## **Шаг 1: Настройте R2 в качестве агента DHCP Relay для локальной сети на интерфейсе G0/0/1**
+
+**a.** Настройте команду **ip helper-address** на интерфейсе **G0/1**, указав IP-адрес интерфейса **G0/0** маршрутизатора R1.
+```
+R2(config)# interface g0/1
+R2(config-if)# ip helper-address 10.0.0.1
+```
+**b.** Сохраните текущую конфигурацию.
+
+```
+R2#copy running-config startup-config
+
+```
+
+## **Шаг 2: Попробуйте получить IP-адрес от DHCP на PC-B**
+
+**a.** Откройте командную строку на **PC-B** и выполните команду **ip dhcp**
+```
+PC-B> ip dhcp
+DDORA IP 192.168.1.102/28 GW 192.168.1.97
+```
+**b.** После завершения процесса обновления выполните команду **show ip**, чтобы увидеть новую IP-информацию.
+```
+PC-B> show ip
+
+NAME        : PC-B[1]
+IP/MASK     : 192.168.1.102/28
+GATEWAY     : 192.168.1.97
+DNS         :
+DHCP SERVER : 10.0.0.1
+DHCP LEASE  : 217619, 217800/108900/190575
+DOMAIN NAME : test-lab.com
+MAC         : 00:50:79:66:68:06
+LPORT       : 20000
+RHOST:PORT  : 127.0.0.1:30000
+MTU         : 1500
+
+PC-B>
+```
+
+**c.** Проверьте подключение, отправив **ping** на IP-адрес интерфейса **G0/1** маршрутизатора **R1**.
+```
+PC-B> ping 192.168.1.1
+
+84 bytes from 192.168.1.1 icmp_seq=1 ttl=254 time=7.734 ms
+84 bytes from 192.168.1.1 icmp_seq=2 ttl=254 time=8.005 ms
+84 bytes from 192.168.1.1 icmp_seq=3 ttl=254 time=7.973 ms
+84 bytes from 192.168.1.1 icmp_seq=4 ttl=254 time=7.636 ms
+84 bytes from 192.168.1.1 icmp_seq=5 ttl=254 time=7.554 ms
+
+PC-B>
+```
+**d.** Выполните команду **show ip dhcp binding** на **R1**, чтобы проверить назначения **DHCP**.
+```
+R1#show ip dhcp binding
+Bindings from all pools not associated with VRF:
+IP address          Client-ID/              Lease expiration        Type
+                    Hardware address/
+                    User name
+192.168.1.6         0100.5079.6668.05       Nov 28 2024 12:27 PM    Automatic
+192.168.1.102       0100.5079.6668.06       Nov 28 2024 12:43 PM    Automatic
+R1#
+```
+
+
+
+**e.** Выполните команду **show ip dhcp server statistics** на **R1** и **R2**, чтобы проверить сообщения **DHCP**.
+
+```
+R1#show ip dhcp server statistics
+Memory usage         42093
+Address pools        2
+Database agents      0
+Automatic bindings   2
+Manual bindings      0
+Expired bindings     0
+Malformed messages   0
+Secure arp entries   0
+
+Message              Received
+BOOTREQUEST          0
+DHCPDISCOVER         4
+DHCPREQUEST          2
+DHCPDECLINE          0
+DHCPRELEASE          0
+DHCPINFORM           0
+
+Message              Sent
+BOOTREPLY            0
+DHCPOFFER            2
+DHCPACK              2
+DHCPNAK              0
+R1#
+```
+```
+R2#show ip dhcp server statistics
+Memory usage         22565
+Address pools        0
+Database agents      0
+Automatic bindings   0
+Manual bindings      0
+Expired bindings     0
+Malformed messages   0
+Secure arp entries   0
+
+Message              Received
+BOOTREQUEST          0
+DHCPDISCOVER         0
+DHCPREQUEST          0
+DHCPDECLINE          0
+DHCPRELEASE          0
+DHCPINFORM           0
+
+Message              Sent
+BOOTREPLY            0
+DHCPOFFER            0
+DHCPACK              0
+DHCPNAK              0
+R2#
 ```
