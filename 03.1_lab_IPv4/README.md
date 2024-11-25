@@ -364,14 +364,46 @@ S1#
 ## **Шаг 9: Ручная настройка интерфейса F0/5 на S1 как магистрального канала (802.1Q trunk).**
 
 **a.** Измените режим порта на интерфейсе, чтобы принудительно включить режим trunk.
+```
+S1(config)# interface g0/3
+S1(config-if)#switchport trunk encapsulation dot1q
+S1(config-if)# switchport mode trunk
+```
 
-**b.** В рамках конфигурации trunk установите нативный VLAN на 1000.
+**b.** В рамках конфигурации **trunk** установите нативный **VLAN** на **1000**.
+```
+S1(config-if-range)# switchport trunk native vlan 1000
+```
 
-**c.** Также в рамках конфигурации trunk укажите, что VLAN 100, 200 и 1000 разрешены для прохождения через trunk.
+**c.** Также в рамках конфигурации **trunk** укажите, что **VLAN 100, 200** и **1000** разрешены для прохождения через **trunk**.
+```
+S1(config-if-range)# switchport trunk allowed vlan 100,200,1000
+```
 
-**d.** Сохраните текущую конфигурацию (running configuration) в файл начальной конфигурации (startup configuration).
+**d.** Сохраните текущую конфигурацию **(running configuration)** в файл начальной конфигурации **(startup configuration)**.
+```
+S1(config)# exit
+S1# copy running-config startup-config
+```
 
-**e.** Проверьте статус trunk.
+**e.** Проверьте статус **trunk**.
+```
+S1#show interface trunk
+```
+Port        Mode             Encapsulation  Status        Native vlan
+Gi0/3       on               802.1q         trunking      1000
 
-Какой IP-адрес будет у ПК, если они подключены к сети через DHCP на данный момент?
-ПК автоматически настроят себе IP-адрес из диапазона Automatic Private IP Address (APIPA) в формате 169.254.x.x.
+Port        Vlans allowed on trunk
+Gi0/3       100,200,1000
+
+Port        Vlans allowed and active in management domain
+Gi0/3       100,200,1000
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi0/3       100,200,1000
+S1#
+```
+
+Какой **IP-адрес** будет у **ПК**, если они подключены к сети через **DHCP** на данный момент?
+
+ПК автоматически настроят себе IP-адрес из диапазона **Automatic Private IP Address** (APIPA) в формате **169.254.x.x**.
