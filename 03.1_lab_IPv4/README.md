@@ -274,3 +274,56 @@ S1# copy running-config startup-config
 S1# clock set 15:30:00 27 Aug 2019
 ```
 
+## **Шаг 7: Создание VLAN на S1.**
+
+**Примечание**: На **S2** настроены только базовые параметры.
+
+**a.** Создайте и назовите необходимые **VLAN** на коммутаторе S1 согласно таблице выше.
+
+S1(config)# vlan 100
+S1(config-vlan)# name Clients
+S1(config-vlan)# vlan 200
+S1(config-vlan)# name Management
+S1(config-vlan)# vlan 999
+S1(config-vlan)# name Parking_Lot
+S1(config-vlan)# vlan 1000
+S1(config-vlan)# name Native
+S1(config-vlan)# exit
+
+
+
+**b.** Настройте и активируйте интерфейс управления на **S1 (VLAN 200)**, используя второй IP-адрес из подсети, рассчитанной ранее. Дополнительно настройте шлюз по умолчанию на **S1**.
+
+S1(config)# interface vlan 200
+S1(config-if)# ip address 192.168.1.66 255.255.255.224
+S1(config-if)# no shutdown
+S1(config-if)# exit
+S1(config)# ip default-gateway 192.168.1.65
+
+
+
+**c.** Настройте и активируйте интерфейс управления на **S2** (VLAN 1), используя второй IP-адрес из подсети, рассчитанной ранее. Дополнительно настройте шлюз по умолчанию на **S2**.
+
+S2(config)# interface vlan 1
+S2(config-if)# ip address 192.168.1.98 255.255.255.240
+S2(config-if)# no shutdown
+S2(config-if)# exit
+S2(config)# ip default-gateway 192.168.1.97
+
+
+**d.** Назначьте все неиспользуемые порты на **S1** в **VLAN Parking_Lot**, настройте их в статическом режиме доступа и административно деактивируйте их. На **S2** административно деактивируйте все неиспользуемые порты.
+
+**Примечание:** Команда **interface range** будет полезна для выполнения этой задачи с минимальным количеством команд.
+
+S1(config)#int range g0/0-2,g1/0-2
+S1(config-if-range)# switchport mode access
+S1(config-if-range)# switchport access vlan 999
+S1(config-if-range)# shutdown
+S1(config-if-range)# exit
+
+S1(config)#int range g0/0-2,g1/0-2
+S2(config-if-range)# switchport mode access
+S2(config-if-range)# shutdown
+S2(config-if-range)# exit
+
+
