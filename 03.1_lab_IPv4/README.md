@@ -279,7 +279,7 @@ S1# clock set 15:30:00 27 Aug 2019
 **Примечание**: На **S2** настроены только базовые параметры.
 
 **a.** Создайте и назовите необходимые **VLAN** на коммутаторе S1 согласно таблице выше.
-
+```
 S1(config)# vlan 100
 S1(config-vlan)# name Clients
 S1(config-vlan)# vlan 200
@@ -289,32 +289,32 @@ S1(config-vlan)# name Parking_Lot
 S1(config-vlan)# vlan 1000
 S1(config-vlan)# name Native
 S1(config-vlan)# exit
-
+```
 
 
 **b.** Настройте и активируйте интерфейс управления на **S1 (VLAN 200)**, используя второй IP-адрес из подсети, рассчитанной ранее. Дополнительно настройте шлюз по умолчанию на **S1**.
-
+```
 S1(config)# interface vlan 200
 S1(config-if)# ip address 192.168.1.66 255.255.255.224
 S1(config-if)# no shutdown
 S1(config-if)# exit
 S1(config)# ip default-gateway 192.168.1.65
-
+```
 
 
 **c.** Настройте и активируйте интерфейс управления на **S2** (VLAN 1), используя второй IP-адрес из подсети, рассчитанной ранее. Дополнительно настройте шлюз по умолчанию на **S2**.
-
+```
 S2(config)# interface vlan 1
 S2(config-if)# ip address 192.168.1.98 255.255.255.240
 S2(config-if)# no shutdown
 S2(config-if)# exit
 S2(config)# ip default-gateway 192.168.1.97
-
+```
 
 **d.** Назначьте все неиспользуемые порты на **S1** в **VLAN Parking_Lot**, настройте их в статическом режиме доступа и административно деактивируйте их. На **S2** административно деактивируйте все неиспользуемые порты.
 
 **Примечание:** Команда **interface range** будет полезна для выполнения этой задачи с минимальным количеством команд.
-
+```
 S1(config)#int range g0/0-2,g1/0-2
 S1(config-if-range)# switchport mode access
 S1(config-if-range)# switchport access vlan 999
@@ -325,5 +325,38 @@ S1(config)#int range g0/0-2,g1/0-2
 S2(config-if-range)# switchport mode access
 S2(config-if-range)# shutdown
 S2(config-if-range)# exit
+```
+## **Шаг 8: Назначение VLAN для соответствующих интерфейсов коммутатора.**
+
+**a.** Назначьте используемые порты в соответствующие **VLAN** (указанные в таблице VLAN выше) и настройте их в статическом режиме доступа.
+```
+S1(config)#interface g1/3
+S1(config-if)# switchport mode access
+S1(config-if)# switchport access vlan 100
+```
 
 
+**b.** Проверим, что **VLAN** назначены на правильные интерфейсы.
+
+```
+S1#show vlan br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/3
+100  Clients                          active    Gi1/3
+200  Management                       active
+999  Parking_Lot                      active    Gi0/0, Gi0/1, Gi0/2, Gi1/0
+                                                Gi1/1, Gi1/2
+1000 Native                           active
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+S1#
+
+```
+
+Почему интерфейс **G0/3** указан в **VLAN 1**?
+
+Порт **G0/3** находится в **VLAN** по умолчанию и не был настроен как магистральный канал **(802.1Q trunk)**.
