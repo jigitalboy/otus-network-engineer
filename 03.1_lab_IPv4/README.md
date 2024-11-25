@@ -171,3 +171,106 @@ GigabitEthernet0/1.1000    unassigned      YES unset  up                    up
 GigabitEthernet0/2         unassigned      YES unset  administratively down down
 GigabitEthernet0/3         unassigned      YES unset  administratively down down
 ```
+
+## **Шаг 5: Настройте G0/0/1 на R2, затем G0/0/0 и статическую маршрутизацию для обоих маршрутизаторов**
+
+Шаг 5: Настройте **G0/1** на **R2**, затем **G0/0** и статическую маршрутизацию для обоих маршрутизаторов
+
+**a.** Настройте G0/1 на R2 с первым IP-адресом из подсети C, который вы рассчитали ранее.
+
+```
+R2(config)#int g0/1
+R2(config-if)#ip add 192.168.1.97 255.255.255.240
+R2(config-if)#no shut
+R2(config-if)#
+```
+
+**b.** Настройте интерфейс **G0/0** для каждого маршрутизатора в соответствии с таблицей адресации **IP**, приведённой выше.
+```
+R1(config)#interface g0/0
+R1(config-if)#ip address 10.0.0.1 255.255.255.252
+R1(config-if)#no shutdown
+R1(config-if)#
+```
+```
+R2(config)#interface g0/0
+R2(config-if)#ip address 10.0.0.2 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#
+```
+
+**c.** Настройте маршрут по умолчанию на каждом маршрутизаторе, указывающий на **IP-адрес** интерфейса **G0/0** другого маршрутизатора.
+
+```
+R1(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2
+R2(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.1
+```
+
+**d.** Проверьте, что статическая маршрутизация работает, отправив ping на адрес **G0/0/1** маршрутизатора **R2** с маршрутизатора **R1**.
+
+```
+R1# ping 192.168.1.97
+```
+
+**e.** Сохраните текущую конфигурацию **(running configuration)** в файл начальной конфигурации **(startup configuration)**.
+
+```
+R1# copy running-config startup-config
+```
+
+## **Шаг 6: Настройка базовых параметров для каждого коммутатора.**
+
+**a**. Присвойте имя устройству (коммутатору).
+
+```
+switch(config)# hostname S1
+```
+
+**b.** Отключите поиск **DNS (DNS Lookup)**, чтобы предотвратить попытки маршрутизатора переводить неправильно введенные команды, как будто это имена хостов.
+
+```
+S1(config)# no ip domain-lookup
+```
+
+
+**c.** Установите class как привилегированный EXEC пароль (шифрованный).
+
+```
+S1(config)# enable secret class
+```
+
+**d.** Установите cisco как пароль консоли и включите авторизацию входа.
+```
+S1(config)# line console 0
+S1(config-line)# password cisco
+S1(config-line)# login
+```
+
+**e.** Установите cisco как пароль VTY и включите авторизацию входа.
+```
+S1(config)# line vty 0 4
+S1(config-line)# password cisco
+S1(config-line)# login
+```
+
+**f.** Зашифруйте пароли в открытом виде.
+```
+S1(config)# service password-encryption
+```
+
+**g.** Создайте баннер, предупреждающий всех, кто получает доступ к устройству, что несанкционированный доступ запрещен.
+```
+S1(config)# banner motd $ Authorized Users Only! $
+```
+
+**h.** Сохраните текущую конфигурацию (running configuration) в файл начальной конфигурации (startup configuration).
+```
+S1(config)# exit
+S1# copy running-config startup-config
+```
+
+**i.** Установите на коммутаторе текущее время и дату.
+```
+S1# clock set 15:30:00 27 Aug 2019
+```
+
