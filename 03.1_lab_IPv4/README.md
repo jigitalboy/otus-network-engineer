@@ -449,7 +449,101 @@ R1(config)# ip dhcp excluded-address 192.168.1.97 192.168.1.101
 R1(config)# ip dhcp pool R2_Client_LAN
 R1(dhcp-config)# network 192.168.1.96 255.255.255.240
 R1(dhcp-config)# default-router 192.168.1.97
-R1(dhcp-config)# domain-name ccna-lab.com
+R1(dhcp-config)# domain-name test-lab.com
 R1(dhcp-config)# lease 2 12 30
 ```
 
+## **Шаг 2: Сохраните конфигурацию**
+Сохраните текущую конфигурацию (running configuration) в файл начальной конфигурации (startup configuration).
+```
+R1# copy running-config startup-config
+```
+## **Шаг 3: Проверьте конфигурацию DHCPv4 сервера**
+**a.** Используйте команду show ip dhcp pool, чтобы изучить детали пулов.
+```
+
+R1#show ip dhcp pool
+
+Pool R1_Client_LAN :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0
+ Total addresses                : 62
+ Leased addresses               : 0
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased addresses
+ 192.168.1.1          192.168.1.1      - 192.168.1.62      0
+
+Pool R2_Client_LAN :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0
+ Total addresses                : 14
+ Leased addresses               : 0
+ Pending event                  : none
+ 1 subnet is currently in the pool :
+ Current index        IP address range                    Leased addresses
+ 192.168.1.97         192.168.1.97     - 192.168.1.110     0
+```
+
+
+**b.** Используйте команду **show ip dhcp binding**, чтобы изучить существующие назначения 
+DHCP-адресов.
+```
+R1#show ip dhcp binding
+Bindings from all pools not associated with VRF:
+IP address          Client-ID/              Lease expiration        Type
+                    Hardware address/
+                    User name
+R1#
+```
+
+**c.** Используйте команду **show ip dhcp server**, чтобы изучить сообщения DHCP.
+
+R1#show dhcp server
+   DHCP server: ANY (255.255.255.255)
+    Leases:   0
+    Offers:   0      Requests: 0     Acks : 0     Naks: 0
+    Declines: 0      Releases: 0     Query: 0     Bad: 0
+    Forcerenews: 0      Failures: 0
+
+
+## **Шаг 4: Попробуйте получить IP-адрес от DHCP на PC-A**
+
+**a.** Откройте командную строку на PC-A **ip dhcp**
+
+```
+PC-A> ip dhcp
+DDORA IP 192.168.1.6/26 GW 192.168.1.1
+
+PC-A>
+```
+**b.** После завершения процесса обновления выполните команду **show ip**, чтобы увидеть новую IP-информацию.
+```
+PC-A> show ip
+
+NAME        : PC-A[1]
+IP/MASK     : 192.168.1.6/26
+GATEWAY     : 192.168.1.1
+DNS         :
+DHCP SERVER : 192.168.1.1
+DHCP LEASE  : 217510, 217800/108900/190575
+DOMAIN NAME : test-lab.com
+MAC         : 00:50:79:66:68:05
+LPORT       : 20000
+RHOST:PORT  : 127.0.0.1:30000
+MTU         : 1500
+```
+
+**c.** Проверьте подключение, отправив ping на IP-адрес интерфейса G0/1 маршрутизатора R1.
+
+```
+PC-A> ping 192.168.1.1
+
+84 bytes from 192.168.1.1 icmp_seq=1 ttl=255 time=7.005 ms
+84 bytes from 192.168.1.1 icmp_seq=2 ttl=255 time=6.113 ms
+84 bytes from 192.168.1.1 icmp_seq=3 ttl=255 time=6.328 ms
+84 bytes from 192.168.1.1 icmp_seq=4 ttl=255 time=6.155 ms
+84 bytes from 192.168.1.1 icmp_seq=5 ttl=255 time=6.361 ms
+
+PC-A>
+```
