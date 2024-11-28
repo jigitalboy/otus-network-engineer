@@ -247,7 +247,7 @@ R1#
 R1# copy running-config startup-config
 ```
 
-<a name="part_2"><h2>Часть 2: Проверить назначение адреса <b>SLAAC</b> с устройства R1</h2></a>
+<a name="part_2"><h2>Часть 2: Проверить назначение адреса SLAAC с устройства R1</h2></a>
 
 В **Части 2** вы проверите что хост **PC-A** получил **IPv6-адрес** с использованием метода SLAAC.
 
@@ -255,19 +255,18 @@ R1# copy running-config startup-config
 
 Через некоторое время результат выполнения команды **show ipv6** (только в **EVE-NG**) должен показать, что PC-A присвоил себе адрес из сети 2001:db8:acad:1::/64.
 ```
-PC-A> show ipv6
+C:\Users\Student> ipconfig
+Windows IP Configuration
 
-NAME              : PC-A[1]
-LINK-LOCAL SCOPE  : fe80::250:79ff:fe66:680b/64
-GLOBAL SCOPE      : 2001:db8:acad:1:2050:79ff:fe66:680b/64
-DNS               :
-ROUTER LINK-LAYER : 50:00:00:07:00:01
-MAC               : 00:50:79:66:68:0b
-LPORT             : 20000
-RHOST:PORT        : 127.0.0.1:30000
-MTU:              : 1500
+Ethernet adapter Ethernet 2:
 
-PC-A>
+   Connection-specific DNS Suffix  . : 
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68
+   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23
+   Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6
+   IPv4 Address. . . . . . . . . . . : 169.254.218.104
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . : fe80::1%6
 ```
 **Откуда взялась часть адреса host-id?**
 ```
@@ -279,10 +278,101 @@ PC-A>
 
 В Части 3 мы настроим и проверим статeless сервер DHCP на R1. Цель — предоставить ПК-A информацию о сервере DNS и домене.
 
-#### **Шаг 1:** Изучите конфигурацию ПК-A более подробно.
-a. Выполните команду ipconfig /all на ПК-A и посмотрите на вывод.
+#### **Шаг 1:** Изучим конфигурацию ПК-A более подробно.
+
+**a.** Выполните команду ipconfig /all на ПК-A и посмотрите на вывод.
+```
+C:\Users\Student> ipconfig /all
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : PC-A
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) 852574L Gigabit Network Connection
+   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
+   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23(Preferred)
+   Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6(Preferred)
+   IPv4 Address. . . . . . . . . . . : 169.254.218.104(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . : fe80::1%6
+   DHCPv6 IAID . . . . . . . . . . . : 50334761
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F5-CE-A2-00-50-56-B3-63-6D
+   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                       fec0:0:0:ffff::2%1
+                                       fec0:0:0:ffff::3%1
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+```
 b. Обратите внимание, что отсутствует основной суффикс DNS. Также обратите внимание, что адреса серверов DNS указаны как "site local anycast" адреса, а не как адреса unicast, как ожидалось.
+
+#### **Шаг 2:** Настройка R1 для предоставления stateless DHCPv6 для PC-A.
+
+**a.** Создайте пул .**DHCPv6.** на .**R1.** с именем .**R1-STATELESS.**. В этом пуле назначьте адрес сервера .**DNS.** как .**2001:db8:acad::1.** и доменное имя как stateless.com.
+```
+R1(config)# ipv6 dhcp pool R1-STATELESS
+R1(config-dhcp)# dns-server 2001:db8:acad::254
+R1(config-dhcp)# domain-name STATELESS.com
+```
+**b.** Настройте интерфейс .**G0/1.** на .**R1.** для предоставления флага .**OTHER.** конфигурации сети .**R1.** и укажите созданный пул .**DHCP.** в качестве ресурса .**DHCP.** для этого интерфейса.
+```
+R1(config)# interface g0/1
+R1(config-if)# ipv6 nd other-config-flag
+R1(config-if)# ipv6 dhcp server R1-STATELESS
+```
+**c.** Сохраните текущую конфигурацию в файл стартовой конфигурации.
+```
+R1# copy running-config startup-config
+```
+**d.** Перезагрузите **PC-A.**.
+
+**e.** Изучите вывод команды .**ipconfig /all.** и обратите внимание на изменения.
+```
+C:\Users\Student> ipconfig /all
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : PC-A
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+   DNS Suffix Search List. . . . . . : STATELESS.com
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . : STATELESS.com
+   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
+   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
+   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23(Preferred)
+   Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6(Preferred)
+   IPv4 Address. . . . . . . . . . . : 169.254.218.104(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . : fe80::1%6
+   DHCPv6 IAID . . . . . . . . . . . : 50334761
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F5-CE-A2-00-50-56-B3-63-6D
+   DNS Servers . . . . . . . . . . . : 2001:db8:acad::254
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+   Connection-specific DNS Suffix Search List :
+                                       STATELESS.com
+```
+**f.** Проверьте подключение, пропингуйте .**IP-адрес.** интерфейса .**G0/1.** на .**R2.**.
+
+![ping_01](lab_v6_ping_01.png)
+
+
+
+
+
 <a name="part_4"><h2>Часть 4: Настроить и проверить сервер Stateful DHCPv6 на устройстве R1</h2></a>
+
 
 <a name="part_5"><h2>Часть 5: Настроить и проверить DHCPv6 Relay на устройстве R2</h2></a>
 
