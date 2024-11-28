@@ -23,6 +23,8 @@
 
 <a name="part_1"><h2>Часть 1</h2></a>
 
+## Firts step
+
 <a name="part_2"><h2>Часть 2</h2></a>
 
 <a name="part_3"><h2>Часть 3</h2></a>
