@@ -15,6 +15,8 @@
 
 <a name="item_01"><h2>Топология</h2></a>
 
+![topology](lab_v6_topology.png)
+
 <a name="item_02"><h2>Таблица адресации</h2></a>
 
 ![addresssing](lab_v6_addressing.png)
