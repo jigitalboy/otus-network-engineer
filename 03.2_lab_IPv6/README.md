@@ -280,7 +280,7 @@ Ethernet adapter Ethernet 2:
 
 #### **Шаг 1:** Изучим конфигурацию ПК-A более подробно.
 
-**a.** Выполните команду ipconfig /all на ПК-A и посмотрите на вывод.
+**a.** Выполните команду ipconfig /all на PC-A и посмотрите на вывод.
 ```
 C:\Users\Student> ipconfig /all
 Windows IP Configuration
@@ -295,7 +295,7 @@ Ethernet adapter Ethernet0:
 
    Connection-specific DNS Suffix  . : 
    Description . . . . . . . . . . . : Intel(R) 852574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
+   Physical Address. . . . . . . . . : 50-00-00-1D-00-00
    IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
    Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23(Preferred)
    Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6(Preferred)
@@ -347,7 +347,7 @@ Ethernet adapter Ethernet0:
 
    Connection-specific DNS Suffix  . : STATELESS.com
    Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
+   Physical Address. . . . . . . . . : 50-00-00-1D-00-00
    DHCP Enabled. . . . . . . . . . . : Yes
    Autoconfiguration Enabled . . . . : Yes
    IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
@@ -367,13 +367,115 @@ Ethernet adapter Ethernet0:
 
 ![ping_01](lab_v6_ping_01.png)
 
-
-
-
-
 <a name="part_4"><h2>Часть 4: Настроить и проверить сервер Stateful DHCPv6 на устройстве R1</h2></a>
 
 
+В **Части 4** мы настроим **R1** для ответа на запросы **DHCPv6** с **LAN**, подключенной к **R2**.
+
+**a.** Создайте пул **DHCPv6** на **R1** для сети **2001:db8:acad:3:aaaa::/80**. Этот пул будет предоставлять адреса для **LAN**, подключенной к интерфейсу **G0/1** на **R2**. В рамках пула установите сервер **DNS** как **2001:db8:acad::254** и доменное имя как STATEFUL.com.
+```
+R1(config)# ipv6 dhcp pool R2-STATEFUL
+R1(config-dhcp)# address prefix 2001:db8:acad:3:aaa::/80
+R1(config-dhcp)# dns-server 2001:db8:acad::254
+R1(config-dhcp)# domain-name STATEFUL.com
+```
+**b.** Назначьте только что созданный пул **DHCPv6** интерфейсу **G0/0** на **R1**.
+```
+R1(config)# interface g0/0
+R1(config-if)# ipv6 dhcp server R2-STATEFUL
+```
+
 <a name="part_5"><h2>Часть 5: Настроить и проверить DHCPv6 Relay на устройстве R2</h2></a>
+
+В **Части 5** вы настроите и проверите **DHCPv6 relay** на R2, чтобы PC-B мог получить **IPv6-адрес**.
+
+#### **Шаг 1:** Включите PC-B и изучите сгенерированный им адрес SLAAC.
+```
+C:\Users\Student> ipconfig /all
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
+   Physical Address. . . . . . . . . : 50-00-00-0D-00-00
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:3:a0f3:3d39:f9fb:a020(Preferred)
+   Temporary IPv6 Address. . . . . . : 2001:db8:acad:3:d4f3:7b16:eeee:b2b5(Preferred)
+   Link-local IPv6 Address . . . . . : fe80::a0f3:3d39:f9fb:a020%6(Preferred)
+   IPv4 Address. . . . . . . . . . . : 169.254.160.32(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . : fe80::1%6
+   DHCPv6 IAID . . . . . . . . . . . : 50334761
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F2-08-38-00-50-56-B3-7B-06
+   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                       fec0:0:0:ffff::2%1
+                                       fec0:0:0:ffff::3%1
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+```
+Обратите внимание на вывод, в котором **префикс**, используемый для адреса, — **2001:db8:acad:3::**.
+
+
+#### **Шаг 2:** Настройка R2 как агента DHCP relay для сети на G0/0/1.
+
+**a.** Настройте команду ipv6 dhcp relay на интерфейсе G0/1 на R2, указав адрес назначения как адрес интерфейса G0/0/0 на R1. Также настройте команду managed-config-flag.
+```
+R2(config)# interface g0/1
+R2(config-if)# ipv6 nd managed-config-flag
+R2(config-if)# ipv6 dhcp relay destination 2001:db8:acad:2::1 g0/0
+```
+**b.** Сохраните вашу конфигурацию.
+
+#### **Шаг 3:** Попытка получения IPv6-адреса от DHCPv6 на ПК-B.
+
+**a.** Перезагрузите PC-B.
+
+**b.** Откройте командную строку на **PC-B** и выполните команду **ipconfig /all**, чтобы изучить вывод и увидеть результаты работы операции **DHCPv6 relay**.
+```
+C:\Users\Student> ipconfig /all
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+   DNS Suffix Search List. . . . . . : STATEFUL.com
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . : STATEFUL.com
+   Description . . . . . . . . . . . : Intel(R) 852574L Gigabit Network Connection
+   Physical Address. . . . . . . . . : 00-50-56-B3-7B-06
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   IPv6 Address. . . . . . . . . . . : 2001:db8:acad3:aaaa:7104:8b7d:5402(Preferred)
+   Lease Obtained. . . . . . . . . . : Sunday, October 6, 2019 3:27:13 PM
+   Lease Expires . . . . . . . . . . : Tuesday, October 8, 2019 3:27:13 PM
+   Link-local IPv6 Address . . . . . : fe80::a0f3:3d39:f9fb:a020%6(Preferred)
+   IPv4 Address. . . . . . . . . . . : 169.254.160.32(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . : fe80::2%6
+   DHCPv6 IAID . . . . . . . . . . . : 50334761
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F2-08-38-00-50-56-B3-7B-06
+   DNS Servers . . . . . . . . . . . : 2001:db8:acad::254
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+   Connection-specific DNS Suffix Search List  :
+                                       STATEFUL.com
+
+```
+**c.** Проверьте подключение, пропингуйте **IP-адрес** интерфейса **G0/1** на **R1**.
+
+
+
+
+
 
 <a name="item_6"><h2>Часть 6</h2></a>
