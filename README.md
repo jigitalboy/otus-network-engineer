@@ -2,5 +2,5 @@
 
 - [Lab 1 - VLAN и маршрутизация между VLAN](/01_lab_vlans/README.md)
 - [Lab 2 - Лабораторная работа. Развертывание коммутируемой сети с резервными каналами](/02_lab_stp/README.md)
-- [Lab 3.1 - Имплементация IPv4 ](/03.1_lab_IPv4//README.md)
-- [Lab 3.2 - Имплементация IPv6 ](/03.2_lab_IPv6//README.md)
+- [Lab 3.1 - Имплементация IPv4 ](/03.1_lab_IPv4/README.md)
+- [Lab 3.2 - Имплементация IPv6 ](/03.2_lab_IPv6/README.md)
