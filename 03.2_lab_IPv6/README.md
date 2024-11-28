@@ -404,7 +404,7 @@ Ethernet adapter Ethernet0:
 
    Connection-specific DNS Suffix  . : 
    Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 50-00-00-0D-00-00
+   Physical Address. . . . . . . . . : 50-00-00-2D-00-00
    DHCP Enabled. . . . . . . . . . . : Yes
    Autoconfiguration Enabled . . . . : Yes
    IPv6 Address. . . . . . . . . . . : 2001:db8:acad:3:a0f3:3d39:f9fb:a020(Preferred)
@@ -453,7 +453,7 @@ Ethernet adapter Ethernet0:
 
    Connection-specific DNS Suffix  . : STATEFUL.com
    Description . . . . . . . . . . . : Intel(R) 852574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-B3-7B-06
+   Physical Address. . . . . . . . . : 50-00-00-2D-00-00
    DHCP Enabled. . . . . . . . . . . : Yes
    Autoconfiguration Enabled . . . . : Yes
    IPv6 Address. . . . . . . . . . . : 2001:db8:acad3:aaaa:7104:8b7d:5402(Preferred)
