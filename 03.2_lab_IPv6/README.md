@@ -475,7 +475,3 @@ Ethernet adapter Ethernet0:
 
 ![ping_02](lab_v6_ping_02.png)
 
-
-
-
-<a name="item_6"><h2>Часть 6</h2></a>
