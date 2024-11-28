@@ -1,0 +1,134 @@
+R1#sho running-config
+Building configuration...
+
+Current configuration : 3555 bytes
+!
+! Last configuration change at 21:35:33 UTC Thu Nov 28 2024
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$148h$8XAURdd1tcZeo8Gu0fZf3/
+!
+no aaa new-model
+ethernet lmi ce
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool R1-STATELESS
+ dns-server 2001:DB8:ACAD::254
+ domain-name STATELESS.com
+!
+ipv6 dhcp pool R2-STATEFUL
+ address prefix 2001:DB8:ACAD:3:AAA::/80
+ dns-server 2001:DB8:ACAD::254
+ domain-name STATEFUL.com
+!
+!
+multilink bundle-name authenticated
+!
+redundancy
+!
+!
+interface GigabitEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:ACAD:2::1/64
+ ipv6 dhcp server R2-STATEFUL
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:ACAD:1::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server R1-STATELESS
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ipv6 route ::/0 2001:DB8:ACAD:2::2
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner motd ^C Authorized Users Only! ^C
+!
+line con 0
+ password 7 045802150C2E
+ login
+line aux 0
+line vty 0 4
+ password 7 045802150C2E
+ login
+ transport input none
+!
+no scheduler allocate
+!
+end
+
+R1#
