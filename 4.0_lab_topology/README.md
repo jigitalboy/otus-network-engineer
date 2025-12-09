@@ -51,6 +51,10 @@
 
 ![topology](image_03_address_blocks.png)
 
-### Loopback адреса для всех устройств
+### Loopback адреса для всех устройств. Первые два октета соответствуют зонам, третий актет - для маршрутизаторов = .255, для коммутаторов = .254
 
 ![topology](image_04_loopback.png)
+
+### Inter-AS линки (10.250.0.0/16)
+
+![topology](image_05_inter-as-links.png
