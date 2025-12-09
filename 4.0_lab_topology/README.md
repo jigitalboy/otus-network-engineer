@@ -57,4 +57,4 @@
 
 ### Inter-AS линки (10.250.0.0/16)
 
-![topology](image_05_inter-as-links.png
+![topology](image_05_inter-as-links.png)
