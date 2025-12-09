@@ -49,7 +49,7 @@
 
 ### Ниже приведены блоки адресов для каждой зоны
 
-![topology](image_03_address_blocks.png)
+![topology](imas3_address_blocks.png)
 
 ### Loopback адреса для всех устройств
 
