@@ -105,9 +105,8 @@
 # **sdfsdfsdfsdf**
 
 1. **sdfsdfsdfsdfsdf**
-    qsdfqsdfqsdf
-    qsdfqsdfqsdf
-    qsdfqsdfqsdf
+    qsdfqsdfqsdfqsdfqsdfqs qsdfqsvv s qsdfqsdfqs q qsdfqsdfq qsdf qsdf qsdf  qsdf qsdf qsdf qsdf qsdf qsdf qsdf qsdf qsdf qsdf qsdfqsdf qsdf qsdf qs
+    qsdfqsdfqsdf    qsdfqsdfqsdf
 
 # **Целью данной лабораторной работы является**
 
