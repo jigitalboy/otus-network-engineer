@@ -270,7 +270,7 @@ interface Ethernet1/3
 
 interface Loopback1
  ip address 10.100.255.15 255.255.255.255
-
+```
 
 <a name="part_3"><h2>Часть 3: Настроите каждый VPC в каждом офисе в своем VLAN.</h2></a>
 
