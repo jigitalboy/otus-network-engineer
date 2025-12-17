@@ -194,7 +194,7 @@
 - Helheim
 - Midgard
 
-Адресация соответсвтует блокам ip адерсов в зоне.
+``Адресация соответсвтует блокам ip адерсов в зоне.``
 
 ### Valhalla
 
@@ -266,3 +266,4 @@ interface Ethernet1/3
 
 interface Loopback1
  ip address 10.100.255.15 255.255.255.255
+
