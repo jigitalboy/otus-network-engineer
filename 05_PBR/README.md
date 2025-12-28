@@ -57,7 +57,7 @@ PBR состоит из трёх основных элементов:
 | VLAN 10 | Линия провайдера A |
 | VLAN 20 | Линия провайдера B |
 
-Это и есть **политика маршрутизации**.
+В этом и есть суть **политики маршрутизации**.
 
 ---
 
@@ -65,6 +65,43 @@ PBR состоит из трёх основных элементов:
 
 - PBR применяется **на входе (inbound)** на VLAN-интерфейсах маршрутизатора **R28**
 - PBR **проверяется до таблицы маршрутизации**
+
+Таким образом мы сделаем следующее:
+
+1. Определим политику
+  - VLAN 10 - проходит через линк А
+  - VLAN 20 - проходит через линк б
+
+2. Применение этой политики на R28 испоьзуя:
+  - АСL для определения VLAN траффика
+  - route-map для определения next-hop для VLAN
+  - использование этого route-map на входящем интерфейсе соответствующего VLAN
+
+Конфигурация на R28
+
+A) Классификация оффисного траффика (ACL)
+
+ip access-list extended MIDGARD_VLAN10
+ permit ip 10.128.10.0 0.0.0.255 any
+
+ip access-list extended MIDGARD_VLAN20
+ permit ip 10.128.20.0 0.0.0.255 any
+
+B) Определение политика (route-map)
+
+route-map MIDGARD_OFFICE_PBR permit 10
+ match ip address MIDGARD_VLAN10
+ set ip next-hop <PROVIDER_A_NEXT_HOP>
+
+route-map MIDGARD_OFFICE_PBR permit 20
+ match ip address MIDGARD_VLAN20
+ set ip next-hop <PROVIDER_B_NEXT_HOP>
+
+C) Применение политики на интерфейсах каждого из VLAN
+
+
+
+
 
 <a name="item_02"><h2>2. Распределение трафика между двумя линками с провайдером</h2></a>
 
