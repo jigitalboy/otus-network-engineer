@@ -72,6 +72,8 @@ PBR состоит из трёх основных элементов:
   - VLAN 10 - проходит через линк А
   - VLAN 20 - проходит через линк б
 
+![topology](image_pbr01.png)
+
 2. Применение этой политики на R28 испоьзуя:
   - АСL для определения VLAN траффика
   - route-map для определения next-hop для VLAN
@@ -79,16 +81,16 @@ PBR состоит из трёх основных элементов:
 
 Конфигурация на R28
 
-A) Классификация оффисного траффика (ACL)
-
+A. Классификация оффисного траффика (ACL)
+```
 ip access-list extended MIDGARD_VLAN10
  permit ip 10.128.10.0 0.0.0.255 any
 
 ip access-list extended MIDGARD_VLAN20
  permit ip 10.128.20.0 0.0.0.255 any
-
-B) Определение политика (route-map)
-
+```
+B. Определение политика (route-map)
+```
 route-map MIDGARD_OFFICE_PBR permit 10
  match ip address MIDGARD_VLAN10
  set ip next-hop <PROVIDER_A_NEXT_HOP>
@@ -96,8 +98,8 @@ route-map MIDGARD_OFFICE_PBR permit 10
 route-map MIDGARD_OFFICE_PBR permit 20
  match ip address MIDGARD_VLAN20
  set ip next-hop <PROVIDER_B_NEXT_HOP>
-
-C) Применение политики на интерфейсах каждого из VLAN
+```
+C. Применение политики на интерфейсах каждого из VLAN
 
 
 
