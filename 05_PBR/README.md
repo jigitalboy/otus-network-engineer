@@ -99,8 +99,15 @@ route-map MIDGARD_OFFICE_PBR permit 20
  match ip address MIDGARD_VLAN20
  set ip next-hop 10.250.130.14
 ```
-C. Применение политики на интерфейсах каждого из VLAN
+### C. Применение политики на интерфейсах каждого из VLAN
 
+```
+interface Ethernet0/2.10
+ ip policy route-map MIDGARD_PBR
+
+interface Ethernet0/2.20
+ ip policy route-map MIDGARD_PBR
+```
 
 
 
