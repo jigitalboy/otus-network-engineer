@@ -93,7 +93,7 @@ ip access-list extended MIDGARD_VLAN20
 ```
 route-map MIDGARD_OFFICE_PBR permit 10
  match ip address MIDGARD_VLAN10
- set ip next-hop 10.250.130.13
+ set ip next-hop 10.250.130.12
 
 route-map MIDGARD_OFFICE_PBR permit 20
  match ip address MIDGARD_VLAN20
@@ -109,7 +109,17 @@ interface Ethernet0/2.20
  ip policy route-map MIDGARD_PBR
 ```
 
+Таким образом, наша политика работае, и мы можем это верифицировать посредтвом такой комманды:
 
+```
+show route-map MIDGARD_OFFICE_PBR
+
+```
+Мы видим, что счетчик работает каждый раз, когда мы делаем пинг на наших хостах в **vlan 10** и **vlan 20** 
+
+**Ping** мы делай для теста на **loopback** интерфейс **R24 (10.52.255.24)**
+
+![topology](image_ping01.png)
 
 
 <a name="item_02"><h2>2. Распределение трафика между двумя линками с провайдером</h2></a>
