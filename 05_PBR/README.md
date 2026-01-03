@@ -276,6 +276,14 @@ route-map MIDGARD_OFFICE_PBR permit 20
 show ip sla statistics
 show track
 ```
+**show ip sla statistics** output:
+
+![topology](image_ipsla01.png)
+
+**show track** output:
+
+![topology](image_track01.png)
+
 Эти команды позволяют:
 
 - увидеть успешные и неуспешные проверки
