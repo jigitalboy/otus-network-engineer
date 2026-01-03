@@ -251,6 +251,16 @@ track 2 ip sla 2 reachability
 
 Tracking-объекты используются в PBR с ключевым словом ```verify-availability```.
 
+```
+route-map MIDGARD_OFFICE_PBR permit 10
+ match ip address MIDGARD_VLAN10
+ set ip next-hop verify-availability 10.250.130.12 1 track 1
+
+route-map MIDGARD_OFFICE_PBR permit 20
+ match ip address MIDGARD_VLAN20
+ set ip next-hop verify-availability 10.250.130.14 1 track 2
+```
+
 Принцип работы:
 
 - Пока tracking-объект находится в состоянии **UP**, **PBR** использует заданный **next-hop**
