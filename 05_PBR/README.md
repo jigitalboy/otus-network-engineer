@@ -346,11 +346,12 @@ show track
 * * * * *
 
 ### Пример (VLAN 10)
-
-`route-map MIDGARD_OFFICE_PBR permit 10
+```
+route-map MIDGARD_OFFICE_PBR permit 10
  match ip address MIDGARD_VLAN10
  set ip next-hop verify-availability 10.250.130.12 1 track 1
- set ip next-hop verify-availability 10.250.130.14 2 track 2`
+ set ip next-hop verify-availability 10.250.130.14 2 track 2
+```
 
 | Условие | Результат |
 | --- | --- |
@@ -378,10 +379,11 @@ show track
 ### Описание
 
 В текущей конфигурации для VLAN 10 определён **только один PBR next-hop**.
-
-`route-map MIDGARD_OFFICE_PBR permit 10
+```
+route-map MIDGARD_OFFICE_PBR permit 10
  match ip address MIDGARD_VLAN10
- set ip next-hop verify-availability 10.250.130.12 1 track 1`
+ set ip next-hop verify-availability 10.250.130.12 1 track 1
+```
 
 Если этот next-hop становится недоступным, **PBR не может выбрать альтернативу**.
 
@@ -400,9 +402,10 @@ show track
 * * * * *
 
 ### Default-маршруты на R28
-
-`ip route 0.0.0.0 0.0.0.0 10.250.130.12 track 1
-ip route 0.0.0.0 0.0.0.0 10.250.130.14 200`
+```
+ip route 0.0.0.0 0.0.0.0 10.250.130.12 track 1
+ip route 0.0.0.0 0.0.0.0 10.250.130.14 200
+```
 
 -   Основной default-маршрут (через R25) **удаляется**, когда `track 1` в состоянии DOWN
 
